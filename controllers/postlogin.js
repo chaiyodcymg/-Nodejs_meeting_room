@@ -1,20 +1,34 @@
 const con = require("./connectMysql");
+const { encrypt_data ,decrypt_data} = require("./encrypt_data");
 
 
 const postlogin = (req,res)=>{
 
-    const { username , password} =  req.body
-    console.log(req.body);
-
-    con.query("SELECT * FROM users WHERE username = ? AND password = ? "
-    ,[username,password],
+    let { username , password} =  req.body
+    // console.log(req.body);
+   
+    con.query("SELECT * FROM users WHERE username = ?"
+    ,[username],
     (err,result) =>{
         if(err){
             console.log(err)
-            res.status(200).send({status:false,text:"เกิดข้อผิดพลาด",session:"",email:"" ,name:"",role:0})
+           return   res.redirect("/login")
         }
-        console.log(result);
-
+   
+        if(result.length > 0){
+            if( password == decrypt_data(result?.[0]?.password) ){
+                req.session.userid = result?.[0]?.password  
+                req.session.role =  result?.[0]?.role
+                return   res.redirect("/")
+            }else{
+                return   res.redirect("/login")
+            }
+        }
+        return   res.redirect("/login")
+     
+        // req.session.userid = encrypt_data(result.insertId)
+   
     })
+    
 }
 module.exports =  postlogin

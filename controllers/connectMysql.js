@@ -1,6 +1,6 @@
 const mysql = require('mysql2')
 
-const con = mysql.createConnection({
+const con = mysql.createPool({
     host: 'localhost', 
     user:'root',
     password:'',
@@ -10,7 +10,7 @@ const con = mysql.createConnection({
     
 })
 
-con.connect((err)=>{
+con.getConnection((err)=>{
     if(err){
         console.error('\x1b[31m%s\x1b[0m',err)
         return con.connect() ;

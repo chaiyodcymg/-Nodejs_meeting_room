@@ -3,14 +3,13 @@ const app = express()
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
 const  path = require('path');
-
 process.env.TZ = "Asia/Bangkok"
+
 const PORT =  3000
 const session = require('express-session')
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -24,7 +23,7 @@ app.use(session({
 app.use(fileUpload({
     createParentPath: true
 }));
-const router = require('./routes/route')
+const router = require('./routes/route');
 app.use(router)
 
 app.listen(PORT, () => {
