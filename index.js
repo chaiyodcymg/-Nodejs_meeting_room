@@ -2,12 +2,14 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
-const  path = require('path');
+const path = require('path');
 process.env.TZ = "Asia/Bangkok"
 
 const PORT =  3000
 const session = require('express-session')
 const bodyParser = require('body-parser');
+const { flash } = require('express-flash-message');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('views', path.join(__dirname, 'views'));
@@ -23,9 +25,12 @@ app.use(session({
 app.use(fileUpload({
     createParentPath: true
 }));
+app.use(flash());
+
 const router = require('./routes/route');
 app.use(router)
 
 app.listen(PORT, () => {
     console.log('\x1b[34m%s\x1b[0m',`Server running on Port : ${PORT} `)
 })
+

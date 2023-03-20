@@ -8,25 +8,47 @@
   <title>Document</title>
   <%- include('header.ejs') %>
 
-
+    <style>
+      a {
+        text-decoration: none;
+        color: black;
+      }
+    </style>
 </head>
 
 <body>
-  <div class="container my-4">
-    <div class="d-flex justify-content-between">
-      <% if(session.role ==1){%>
-      <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal"
-      data-bs-target="#exampleModal">เพิ่มข้อมูลห้อง</button>
-      <% }%>
-      <a href="/logout" class="btn btn-secondary mb-4" >ออกจากระบบ</a>
-    </div>
   
+  <div class="container my-4">
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs mb-5" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-bs-toggle="tab" href="#home">การจอง</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-bs-toggle="tab" href="#menu1">รายการจอง</a>
+  </li>
+
+</ul>
+ <!-- Tab panes -->
+ <div class="tab-content">
+  <div id="home" class="container tab-pane active">
+
+    <div class="d-flex justify-content-between">
+      <% if(session.role==1){%>
+        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal"
+          data-bs-target="#exampleModal">เพิ่มข้อมูลห้อง</button>
+        <% }%>
+          <a href="/logout" class="btn btn-secondary mb-4">ออกจากระบบ</a>
+    </div>
+
     <div>
-      <table class="table" >
+      <table class="table">
         <thead>
           <tr>
             <th>รายละเอียด</th>
             <th></th>
+            <th>สถานะห้องประชุม</th>
             <th></th>
           </tr>
         </thead>
@@ -35,90 +57,187 @@
 
             <tr>
               <td style="width:110px;">
-                <div>
-                  <img src="<%= item.image_url%>" style="width:100px;height:auto;object-fit: cover;" />
-                </div>
+                <% if(item.room_status=="ใช้งานได้" ){%>
+                  <a href="reservedetail/<%= item.id%>">
+                    <div>
+                      <img src="<%= item.image_url%>" style="width:100px;height:auto;object-fit: cover;" />
+                    </div>
+                    <% }if(item.room_status=="ปิดปรับปรุง" ){%>
+                      <div>
+                        <img src="<%= item.image_url%>" style="width:100px;height:auto;object-fit: cover;" />
+                      </div>
+                      <% }%>
+              </td>
+
+              <td>
+                <% if(item.room_status=="ใช้งานได้" ){%>
+                  <a href="reservedetail/<%= item.id%>">
+                    <div>
+                      <div>
+                        <%= item.room_name%>
+                      </div>
+                      <div>
+                        <%= item.room_detail%>
+                      </div>
+                    </div>
+                  </a>
+                  <% }if(item.room_status=="ปิดปรับปรุง" ){%>
+                    <div>
+                      <div>
+                        <%= item.room_name%>
+                      </div>
+                      <div>
+                        <%= item.room_detail%>
+                      </div>
+                    </div>
+                    <% }%>
               </td>
               <td>
                 <div>
-                  <div>
-                    <%= item.room_name%>
-                  </div>
-                  <div>
-                    <%= item.room_detail%>
-                  </div>
+                  <% if(item.room_status=="ใช้งานได้" ){%>
+                    <p class="text-success">
+                  <% }if(item.room_status=="ปิดปรับปรุง" ){%>
+                        <p class="text-danger">
+                  <% }%>
+                            <%= item.room_status %>
+
+                        </p>
                 </div>
               </td>
-              <td >
+              <td>
                 <div class="d-flex justify-content-end">
-                <div class="btn-group " role="group" aria-label="Basic example">
-                  <% if(session.role ==1){%>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal<%= item.id%>">แก้ไข</button>
+                  <button type="button" class="btn btn-primary me-4"  data-bs-toggle="modal" data-bs-target="#Modaldetail<%= item.id%>">ดูรายละเอียด</button>
+                  <div class="btn-group " role="group" aria-label="Basic example">
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal<%= item.id%>" tabindex="-1" aria-labelledby="exampleModalLabel"
-                      aria-hidden="true">
-                      <form action="/editroom?id=<%= item.id%>" method="post" enctype="multipart/form-data">
+                    <% if(session.role==1){%>
+                      <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal<%= item.id%>">แก้ไข</button>
+
+                      <!-- Modal edit-->
+                      <div class="modal fade" id="exampleModal<%= item.id%>" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <form action="/editroom?id=<%= item.id%>" method="post" enctype="multipart/form-data">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">แก้ไขห้องประชุม</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                  aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+
+                                <div class="mb-3 mt-3">
+                                  <label for="username">ชื่อห้องประชุม:</label>
+                                  <input type="text" class="form-control" placeholder="ชื่อห้อง" name="room_name"
+                                    value="<%= item.room_name %>" required />
+                                </div>
+                                <div class="mb-3">
+                                  <label for="pwd">รายละเอียด:</label>
+                                  <textarea type="text" class="form-control" placeholder="รายละเอียด" name="room_detail"
+                                    required><%= item.room_detail %></textarea>
+                                </div>
+                                <div class="mb-3">
+                                  <label for="pwd">อาคาร/สถานที่:</label>
+                                  <input type="text" class="form-control" placeholder="อาคาร/สถานที่"
+                                    name="room_location" value="<%= item.room_location %>" required />
+                                </div>
+
+                                <div class="mb-3">
+                                  <label for="pwd">จำนวนที่นั่ง:</label>
+                                  <input type="text" class="form-control" placeholder="จำนวนที่นั่ง" name="room_seats"
+                                    value="<%= item.room_seats %>" required />
+                                </div>
+                                <div class="mb-3">
+
+                                  <select class="form-select" aria-label="Default select example" name="room_status">
+                                    <% if(item.room_status=="ใช้งานได้" ){%>
+                                      <option value="<%= item.room_status %>" selected>
+                                        <%= item.room_status %>
+                                      </option>
+                                      <option value="ปิดปรับปรุง">ปิดปรับปรุง</option>
+                                      <% }if(item.room_status=="ปิดปรับปรุง" ){%>
+                                        <option value="ใช้งานได้">ใช้งานได้</option>
+                                        <option value="<%= item.room_status %>" selected>
+                                          <%= item.room_status %>
+                                        </option>
+                                        <% } %>
+                                  </select>
+                                </div>
+                                <div class="mb-3">
+                                  <label for="formFile" class="form-label">รูปภาพ</label>
+                                  <input class="form-control" type="file" id="formFile" name="image" accept="image/*">
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                                <button type="submit" class="btn btn-primary">แก้ไข</button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+
+                      <!-- Modal detail -->
+                      <div class="modal fade" id="Modaldetail<%= item.id%>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">แก้ไขห้องประชุม</h5>
+                            <div class="modal-header ">
+
+                              <h5 class="modal-title" id="exampleModalLabel">รายละเอียดของห้องประชุม</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body d-flex align-items-center flex-column">
+                              <img src="<%= item.image_url%>" width="400">
+                              <table class="table table-bordered mt-3">
+                               <tr>
+                                 <td>ชื่อห้องประชุม</td>
+                                 <td><%= item.room_name %></td>
+                               </tr>
+                               <tr>
+                                <td>รายละเอียด</td>
+                                <td><%= item.room_detail %></td>
+                              </tr>
+                              <tr>
+                                <td>อาคาร/สถานที่</td>
+                                <td><%= item.room_location %></td>
+                              </tr>
+                              <tr>
+                                <td>จำนวนที่นั่ง</td>
+                                <td><%= item.room_seats%></td>
+                              </tr>
+                              <tr>
+                                <td>สถานะห้องประชุม</td>
+                                <td><%= item.room_status %></td>
+                              </tr>
+                              </table>
 
-                              <div class="mb-3 mt-3">
-                                <label for="username">ชื่อห้องประชุม:</label>
-                                <input type="text" class="form-control" placeholder="ชื่อห้อง" name="room_name"
-                                  value="<%= item.room_name %>" required />
-                              </div>
-                              <div class="mb-3">
-                                <label for="pwd">รายละเอียด:</label>
-                                <textarea type="text" class="form-control" placeholder="รายละเอียด" name="room_detail"
-                                  required><%= item.room_detail %></textarea>
-                              </div>
-                              <div class="mb-3">
-                                <label for="pwd">อาคาร/สถานที่:</label>
-                                <input type="text" class="form-control" placeholder="อาคาร/สถานที่" name="room_location"
-                                  value="<%= item.room_location %>" required />
-                              </div>
-                             
-                              <div class="mb-3">
-                                <label for="pwd">จำนวนที่นั่ง:</label>
-                                <input type="text" class="form-control" placeholder="จำนวนที่นั่ง" name="room_seats"
-                                  value="<%= item.room_seats %>" required />
-                              </div>
-                              <div class="mb-3">
-                                <label for="formFile" class="form-label">รูปภาพ</label>
-                                <input class="form-control" type="file" id="formFile" name="image" accept="image/*">
-                              </div>
+                           
                             </div>
                             <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                              <button type="submit" class="btn btn-primary">แก้ไข</button>
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                           </div>
                         </div>
-                      </form>
-                    </div>
-                    <a href="/deleteroom?id=<%= item.id%>" class="btn btn-danger">ลบ</a>
-                    <% }%>
+                      </div>
+                      <a href="/deleteroom?id=<%= item.id%>" class="btn btn-danger">ลบ</a>
+                      <% }%>
+                  </div>
                 </div>
-              </div>
               </td>
+
             </tr>
             <% }) %>
         </tbody>
       </table>
     </div>
-  </div>
+ 
 
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form action="/addroom" method="post" enctype="multipart/form-data">
-      <div class="modal-dialog">
+      <div class="modal-dialog ">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">เพิ่มห้องประชุม</h5>
@@ -128,8 +247,7 @@
 
             <div class="mb-3 mt-3">
               <label for="username">ชื่อห้องประชุม:</label>
-              <input type="text" class="form-control" placeholder="ชื่อห้อง" name="room_name" 
-                required />
+              <input type="text" class="form-control" placeholder="ชื่อห้อง" name="room_name" required />
             </div>
             <div class="mb-3">
               <label for="pwd">รายละเอียด:</label>
@@ -138,14 +256,19 @@
             </div>
             <div class="mb-3">
               <label for="pwd">อาคาร/สถานที่:</label>
-              <input type="text" class="form-control" placeholder="อาคาร/สถานที่" name="room_location" 
-                required />
+              <input type="text" class="form-control" placeholder="อาคาร/สถานที่" name="room_location" required />
             </div>
-         
+
             <div class="mb-3">
               <label for="pwd">จำนวนที่นั่ง:</label>
-              <input type="text" class="form-control" placeholder="จำนวนที่นั่ง" name="room_seats" 
-                required />
+              <input type="text" class="form-control" placeholder="จำนวนที่นั่ง" name="room_seats" required />
+            </div>
+            <div class="mb-3">
+              <label for="pwd">สถานะห้องประชุม:</label>
+              <select class="form-select" aria-label="Default select example" name="room_status">
+                <option value='ใช้งานได้' selected>ใช้งานได้</option>
+                <option value="ปิดปรับปรุง">ปิดปรับปรุง</option>
+              </select>
             </div>
             <div class="mb-3">
               <label for="formFile" class="form-label">รูปภาพ</label>
@@ -168,6 +291,17 @@
     confirmButtonText: 'ตกลง'
   })
 </script> -->
+
+  </div>
+  <div id="menu1" class="container tab-pane fade">
+
+
+  </div>
+ 
+</div>
+</div>
+
+
 </body>
 
 </html>

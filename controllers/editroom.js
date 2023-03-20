@@ -17,10 +17,10 @@ const editroom = (req,res)=>{
         }else{
           file.mv(filename_random)
         }
-        const image_url = filename_random.split("/public/")[1]
-        const {room_name,room_detail,room_location,room_seats} = req.body
-        con.query(`UPDATE room SET room_name = ?, room_detail = ? , room_location =?, image_url =?, room_seats =? , updateAt = now()  WHERE id = ?`
-        ,[room_name,room_detail,room_location,image_url,room_seats,id],
+        const image_url = filename_random.split("/public")[1]
+        const {room_name,room_detail,room_location,room_seats,room_status} = req.body
+        con.query(`UPDATE room SET room_name = ?, room_detail = ? , room_location =?, image_url =?, room_seats =? , updateAt = now() ,room_status=?  WHERE id = ?`
+        ,[room_name,room_detail,room_location,image_url,room_seats,room_status,id],
         (err,result) =>{
             if(err){
                 console.log(err)
@@ -30,9 +30,9 @@ const editroom = (req,res)=>{
     
         })
     }else{
-        const {room_name,room_detail,room_location,room_seats} = req.body
-        con.query(`UPDATE room SET room_name = ?, room_detail = ? , room_location =?, room_seats =?  , updateAt = now() WHERE id = ?`
-        ,[room_name,room_detail,room_location,room_seats,id],
+        const {room_name,room_detail,room_location,room_seats,room_status} = req.body
+        con.query(`UPDATE room SET room_name = ?, room_detail = ? , room_location =?, room_seats =?  , updateAt = now() , room_status = ? WHERE id = ?`
+        ,[room_name,room_detail,room_location,room_seats,room_status,id],
         (err,result) =>{
             if(err){
                 console.log(err)

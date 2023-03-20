@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('header.ejs') %>
+  
+    <style>
+       
+          #top {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            padding: 0 10px;
+            line-height: 40px;
+            font-size: 12px;
+          }
+          
+          #calendar {
+            width: 80%;
+            margin: 40px auto;
+            padding: 0 10px;
+          }
+
+    </style>
+
+    <script>
+   
+        
+        document.addEventListener('DOMContentLoaded', function() {
+        
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              headerToolbar: {
+                left: 'prev,next,today',
+                center: 'title',
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+              },
+              locale: 'th',
+              buttonIcons: true, 
+              navLinks: true, 
+              editable: true,
+              events:  "/findreservebyid/<%= room.id %>" ,
+              selectable:true,
+              select: (arg) =>{
+                console.log(arg)
+              },
+              eventClick: (arg)=> {
+                console.log(arg.event._def)
+              }
+            
+            });
+           
+            calendar.render();
+          
+          
+          
+          });
+    </script>
+</head>
+<body>
+    <div class="container my-4 d-flex justify-content-center flex-column align-items-center" >
+      
+        <h2><%= room.room_name %></h2>
+        <div class="d-flex justify-content-end  align-items-end mt-4 " style="  width: 60%;"> 
+            <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#Modalmeeting<%= room.id%>">จองห้องประชุม</button>
+       </div>
+        <div id='calendar'></div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="Modalmeeting<%= room.id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <form action="/addreservation" method="post" >
+
+          
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">จองห้องประชุม</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                    <div class="modal-body">
+                        <div class="mb-3 ">
+                            <label for="room_name">ชื่อห้องประชุม:</label>
+                            <input type="text" class="form-control"  name="id" readonly value="<%= room.id %>" style="display:none;" />
+                            <input type="text" class="form-control" id="room_name" placeholder="ชื่อห้อง" name="room_name" readonly value="<%= room.room_name %>" />
+                        </div>
+                        <div class="mb-3 ">
+                            <label for="reserve_name">ชื่อ:</label>
+                            <input type="text" class="form-control" id="reserve_name" placeholder="ชื่อ" name="reserve_name" value="Booking"  required/>
+                        </div>
+                        <div class="mb-3 d-flex flex-row justify-content-between">
+                            <div>
+                                <label for="start_datetime">เริ่ม</label>
+                                <input type="datetime-local" id="start_datetime" class="form-control"  name="start_datetime"   required/>
+                            </div>
+                            <div>
+                                <label for="end_datetime">สิ้นสุด</label>
+                                <input type="datetime-local" id="end_datetime" class="form-control"  name="end_datetime"   required/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="detail">รายละเอียด:</label>
+                            <textarea type="text" class="form-control" placeholder="รายละเอียด" name="detail"
+                              required></textarea>
+                          </div>
+                    </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary">บันทึก</button>
+                </div>
+            </div>
+            </div>
+        </form>
+        </div>
+    </div>
+    <% if(reservedetail.length > 0){ %>
+        <script>
+            Swal.fire({
+              title: '<%= reservedetail %>',
+              icon: "error",
+              confirmButtonText: 'ตกลง'
+            })
+          </script>
+
+    <% }%>
+    
+</body>
+</html>

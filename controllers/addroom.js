@@ -16,11 +16,11 @@ const addroom = (req,res)=>{
         }else{
           file.mv(filename_random)
         }
-        const image_url = filename_random.split("/public/")[1]
-        const {room_name,room_detail,room_location,room_number,room_seats} = req.body
+        const image_url = filename_random.split("/public")[1]
+        const {room_name,room_detail,room_location,room_status,room_seats} = req.body
         console.log(image_url);
-        con.query(`INSERT INTO room (room_name , room_detail , room_location , image_url , room_seats  ) VALUES(?,?,?,?,?)`
-        ,[room_name,room_detail,room_location,image_url,room_seats],
+        con.query(`INSERT INTO room (room_name , room_detail , room_location , image_url , room_seats,room_status  ) VALUES(?,?,?,?,?,?)`
+        ,[room_name,room_detail,room_location,image_url,room_seats,room_status],
         (err,result) =>{
             if(err){
                 console.log(err)
