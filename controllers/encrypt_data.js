@@ -1,7 +1,7 @@
 const CryptoJS = require("crypto-js");
-const encrypt_key = "813c33ee-d292-4060-884e-ec2897401990asd99sd"
+const encrypt_key = "813c33ee-d292-4060-884e-ec2897401990asd99sd"    //key ในการถอดรหัส 
 
-const encrypt_data =(value)=> {                                                    //key ในการถอดรหัส                                
+const encrypt_data =(value)=> {                                                                        
  const encrypted =  CryptoJS.AES.encrypt(value.toString(), encrypt_key).toString()
  const encoded = CryptoJS.enc.Base64.parse(encrypted).toString(CryptoJS.enc.Hex);
  return encoded

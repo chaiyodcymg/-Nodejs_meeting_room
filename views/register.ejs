@@ -25,5 +25,15 @@
         <br>
         <a href="/login">login</a>
       </div>
+      <% if(register.length > 0){ %>
+        <script>
+            Swal.fire({
+              title: '<%= register%>',
+              icon: "error",
+              confirmButtonText: 'ตกลง'
+            })
+          </script>
+      
+      <% }%>
 </body>
 </html>

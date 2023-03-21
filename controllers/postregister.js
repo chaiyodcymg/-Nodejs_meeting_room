@@ -11,12 +11,19 @@ const postregister = (req,res)=>{
     ,[username,password,role],
     (err,result) =>{
         if(err){
-            console.log(err)
-          return  res.status(200).send({status:false,text:"เกิดข้อผิดพลาด"})
+
+            if(err.code == "ER_DUP_ENTRY"){
+               req.flash('register', 'Username มีผู้ใช้งานแล้ว กรุณาใช้ Username อื่น');
+              return   res.redirect("back")
+            }
+            req.flash('register', "เกิดข้อผิดพลาด");
+            return   res.redirect("back")
         }
-        // console.log(result);
+
+      
         req.session.userid = encrypt_data(result.insertId)
         req.session.role = role
+        req.session.username =  username
         return   res.redirect("/")
 
     })

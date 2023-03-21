@@ -19,6 +19,7 @@ const postlogin = (req,res)=>{
             if( password == decrypt_data(result?.[0]?.password) ){
                 req.session.userid = encrypt_data(result?.[0]?.id)
                 req.session.role =  result?.[0]?.role
+                req.session.username =  result?.[0]?.username 
                 return   res.redirect("/")
             }else{
                 return   res.redirect("/login")

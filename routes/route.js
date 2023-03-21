@@ -1,5 +1,6 @@
 const express = require('express')
 const index = require('../controllers')
+const router = express.Router()
 const requireAuth = require('../controllers/requireAuth')
 const getlogin = require('../controllers/getlogin')
 const getregister = require('../controllers/getresgister')
@@ -14,8 +15,9 @@ const logout = require('../controllers/logout')
 const reservedetail = require('../controllers/reservedetail')
 const addreservation = require('../controllers/addreservation')
 const findReserveByid = require('../controllers/findReserveByid')
-
-const router = express.Router()
+const editreservation = require('../controllers/editreservation')
+const deletereservation = require('../controllers/deletereservation')
+const reserved_owner = require('../controllers/reserved_owner')
 
 router.use((req, res, next) => {
   next()
@@ -29,13 +31,13 @@ router.get("/deleteroom",requireAdmin,deleteroom)
 router.get("/logout",logout)
 router.get("/reservedetail/:id",requireAuth,reservedetail)
 router.get("/findreservebyid/:id",requireAuth,findReserveByid)
-
-
-
+router.get("/deletereservation",requireAuth,reserved_owner,deletereservation)
+// ,deletereservation
 // POST
 router.post("/login",postlogin)
 router.post("/register",postregister)
 router.post("/addroom",requireAdmin,addroom)
 router.post("/editroom",requireAdmin,editroom)
 router.post("/addreservation",requireAuth,addreservation)
-  module.exports = router
+router.post("/editreservation",requireAuth,reserved_owner,editreservation)
+module.exports = router
